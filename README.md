@@ -8,7 +8,8 @@
 Install `slush-slush-marklogic-dotnet` globally:
 
 ```bash
-$ npm install -g slush-slush-marklogic-dotnet
+$ cd path-to/slush-marklogic-dotnet
+$ sudo npm link
 ```
 
 ### Usage
@@ -24,6 +25,20 @@ Run the generator from within the new folder:
 ```bash
 $ cd my-slush-slush-marklogic-dotnet && slush slush-marklogic-dotnet
 ```
+Answer the questions when prompted.
+
+```bash
+$ cd app
+$ dotnet restore
+$ dotnet run
+```
+Visit http://localhost:5000
+
+... but the app in the present state is missing files required to run the app.  Marianne thought she fixed, but apparently she didn't.
+
+
+
+## Begin default documentation on slush 
 
 ## Getting To Know Slush
 
