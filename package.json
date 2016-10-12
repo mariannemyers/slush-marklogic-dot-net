@@ -1,0 +1,47 @@
+{
+  "name": "slush-marklogic-dotnet",
+  "version": "0.1.0",
+  "description": "A slush generator for AngularJS/ASP.NET Core/MarkLogic",
+  "main": "slushfile.js",
+  "author": "Marianne Myers <marianne.gibson+gh@gmail.com>",
+  "contributors": [
+    "Mark Gumban"
+  ],
+  "keywords": [
+    "slushgenerator",
+    "angular",
+    "angularjs",
+    "karma",
+    "marklogic"
+  ],
+  "dependencies": {
+    "colors": "^1.1.2",
+    "fetch": "^1.0.0",
+    "gulp": "^3.8.0",
+    "gulp-conflict": "^0.4.0",
+    "gulp-install": "^0.6.0",
+    "gulp-rename": "^1.2.0",
+    "gulp-replace": "^0.5.4",
+    "gulp-template": "^3.0.0",
+    "inquirer": "^0.12.0",
+    "node-uuid": "^1.4.3",
+    "q": "^1.0.0",
+    "readable-stream": "^2.0.2",
+    "request": "^2.60.0",
+    "underscore.string": "^3.2.2",
+    "vows": "^0.8.0"
+  },
+  "engine": "node >= 0.4.1",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/marklogic/slush-marklogic-node"
+  },
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/marklogic/slush-marklogic-node/issues"
+  },
+  "homepage": "https://github.com/marklogic/slush-marklogic-node"
+}
