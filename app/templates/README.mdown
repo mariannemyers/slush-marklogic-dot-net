@@ -22,15 +22,6 @@ TODO Confirm/Remove the following
 - [Ruby](https://www.ruby-lang.org/en/documentation/installation/) - Roxy
   depends on Ruby in order to run server configuration scripts
 
-# Edit deploy/build.properties
-
-As a temporary solution, edit data/build.properties and set:
-
-    authentication-method=application-level
-
-This will bypass authentication and authorization on MarkLogic and allow anonymous access.  This will
-be addressed in a future release.
-
 # Running the application
 
     ./ml local bootstrap
