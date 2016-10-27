@@ -11,17 +11,15 @@ components:
 
 # Getting Started
 
-MGM: Determine if this is still required.
 Microsoft Windows users should read the [additional requirements documentation](WINDOWS.mdown)
 ## Install Required Dependencies
 
-- [.NET Core](https://www.microsoft.com/net)
+- [.NET Core](https://www.microsoft.com/net/core)
+- [node.js](http://nodejs.org/download/)
 - [npm](https://www.npmjs.com/): Built-in package manager for node (comes with
   node, but check to be sure you have latest version: `npm install -g npm`)
 - [gulp](http://gulpjs.com/): Javascript task automation (`npm install -g
   gulp`)
-- [Slush](http://slushjs.github.io/): Application generation tool (`npm install
-  -g slush`) - only needed if you are generating the initial code
 - [Bower](http://bower.io/): A package manager for front-end libraries (`npm
   install -g bower`)
 - [Git](https://git-scm.com/) - Roxy depends on this version control system
@@ -35,6 +33,11 @@ Microsoft Windows users should read the [additional requirements documentation](
 If you prefer to use the latest code under development:
 
     npm install -g git://github.com/mariannemyers/slush-marklogic-dotnet.git
+
+If you prefer, install it locally with `npm link`
+
+    cd slush-marklogic-dotnet
+    sudo npm link
 
 ## Run the generator
 
@@ -66,17 +69,16 @@ On Windows, that would be:
     ml.bat local bootstrap
     ml.bat local deploy modules
 
-Install additional dependencies using the bower package manager:
+## Restore the ASP.NET dependencies
 
-    bower install
+    dotnet restore
 
-## Run your application
+## Run the ASP.NET Core applicaiton
 
-    gulp serve-local # this will watch the .less file for changes, compile them to .css, and run the node server
+    dotnet run
 
-You can set some settings to match your setup in the Roxy properties files. For example:
+Using Chrome, now visit http://localhost:5000
 
-    gulp serve-local --ml-host=<your-host> --ml-http-port=8234 --app-port=9234 --nosync
 
 # Next Steps
 
@@ -128,5 +130,5 @@ The generator defaults to using a 'rest'-type Roxy app and the 'master' branch
 of Roxy. If you know what you're doing, and you want to do something different,
 you can specify those options with this syntax:
 
-    slush marklogic-node <appName> appType=mvc branch=dev
+    slush marklogic-dotnet <appName> appType=mvc branch=dev
 
