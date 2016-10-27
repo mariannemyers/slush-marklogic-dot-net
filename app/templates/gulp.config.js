@@ -3,18 +3,18 @@
 'use strict';
 
 module.exports = function() {
-  var client = './ui/';
+  var client = './wwwroot/';
   var server = './node-server/';
   var clientApp = client + 'app/';
   var report = './report/';
   var root = './';
   var specRunnerFile = 'specs.html';
-  var temp = './.tmp/';
+  var cssDir = client + 'css/';
   var _ = require('lodash');
   var wiredep = require('wiredep');
   var bower = {
     json: require('./bower.json'),
-    directory: './bower_components/',
+    directory: client + 'bower_components/',
     ignorePath: '..'
   };
   var getWiredepDefaultOptions = function() {
@@ -46,7 +46,8 @@ module.exports = function() {
     ],
     build: './dist/',
     client: client,
-    css: temp + 'main.css',
+    cssDir: cssDir,
+    css: cssDir + 'main.css',
     fonts: [
       bower.directory + 'font-awesome/fonts/**/*.*',
       bower.directory + 'bootstrap/fonts/**/*.*'
@@ -75,13 +76,11 @@ module.exports = function() {
     report: report,
     root: root,
     server: server,
-    source: './ui/',
+    source: './wwwroot/',
     stubsjs: [
       bower.directory + 'angular-mocks/angular-mocks.js',
       client + 'stubs/**/*.js'
     ],
-    temp: temp,
-
     /**
      * optimized files
      */
@@ -175,7 +174,7 @@ module.exports = function() {
         config.specHelpers,
         clientApp + '**/*.module.js',
         clientApp + '**/*.js',
-        temp + config.templateCache.file,
+        // temp + config.templateCache.file,
         config.serverIntegrationSpecs
       ),
       exclude: [],
