@@ -12,7 +12,7 @@
     "angular",
     "angularjs",
     "marklogic",
-    "dotnet"
+    "dotnet",
     "aspdotnet"
   ],
   "dependencies": {
@@ -44,5 +44,5 @@
   "bugs": {
     "url": "https://github.com/mariannemyers/slush-marklogic-dotnet/issues"
   },
-  "homepage": "https://github.com/mariannemyers/slush-marklogic-dotnet""
+  "homepage": "https://github.com/mariannemyers/slush-marklogic-dotnet"
 }
