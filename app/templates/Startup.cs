@@ -45,6 +45,8 @@ namespace slush_marklogic_dotnet_appserver
             app.UseStaticFiles();
             ConfigureRoutes(app, spaSettings.Value);
 
+            Console.WriteLine("MarkLogic App Server: " + Configuration["MarkLogic:Host"] + 
+                " on port " + Configuration["MarkLogic:AppPort"]);
         }
 
         private void ConfigureRoutes(IApplicationBuilder app, SpaSettings spaSettings)
@@ -54,8 +56,8 @@ namespace slush_marklogic_dotnet_appserver
             app.MapWhen(IsMarkLogicPath, builder => builder.RunProxy(new ProxyOptions
             {
                 Scheme = "http",
-                Host = "localhost",
-                Port = "8140"
+                Host = Configuration["MarkLogic:Host"],
+                Port = Configuration["MarkLogic:AppPort"]
             }));
 
             // If the route contains '.' then assume a file to be served
