@@ -49,6 +49,7 @@ function printUsage() {
   process.stdout.write('  ml-app-pass=<..>      MarkLogic pass for guest access. Defaults to: <roxy-appuser-password>\n');
   process.stdout.write('  ml-http-port=<..>     Port at which MarkLogic app-server runs. Defaults to: 8040\n');
   process.stdout.write('  ml-xcc-port=<..>      Port at which MarkLogic xcc-server runs. Defaults to: <ml-app-port>\n');
+  process.stdout.write('  kestrel-port=<..>     Port at which .NET Core (Kestrel) middle-tier runs.  Defaults to: 5000\n');
   // process.stdout.write('  node-port=<..>        Port at which Node.js middle-tier runs. Defaults to: 9070\n');
   // process.stdout.write('  guest-access=<..>     Whether guests are automatically logged in. Defaults to: false\n');
   // process.stdout.write('  disallow-updates=<..> Whether updates to MarkLogic should be disallowed. Defaults to: false\n');
@@ -114,7 +115,8 @@ function processInput() {
     'ml-app-user',
     'ml-app-pass',
     'ml-http-port',
-    'ml-xcc-port'
+    'ml-xcc-port',
+    'kestrel-port'
     // 'node-port'
     // 'guest-access',
     // 'disallow-updates',
@@ -493,6 +495,14 @@ gulp.task('init', [], function(done) {
       }
     });
   }
+  if (!clArgs['kestrel-port']) {
+    prompts.push({
+      type: 'input',
+      name: 'kestrelPort',
+      message: 'Kestrel (.NET Core) port?',
+      default: 5000
+    });
+  }
   // if (!clArgs['node-port']) {
   //   prompts.push({
   //     type: 'input',
@@ -596,6 +606,7 @@ gulp.task('init', [], function(done) {
     settings.marklogicHost = answers.marklogicHost || clArgs['ml-host'];
     settings.marklogicAdminUser = answers.marklogicAdminUser || clArgs['ml-admin-user'];
     settings.marklogicAdminPass = answers.marklogicAdminPass || clArgs['ml-admin-pass'];
+    settings.kestrelPort = answers.kestrelPort || clArgs['kestrel-port'];
     // settings.nodePort = answers.nodePort || clArgs['node-port'];
     settings.appPort = answers.appPort || clArgs['ml-http-port'];
     settings.xccPort = answers.xccPort || clArgs['ml-xcc-port'] || null;
@@ -628,6 +639,7 @@ gulp.task('init', [], function(done) {
             .pipe(replace('@slush-version', pkgSettings.version.trim(), skipBinary))
             .pipe(replace('@sample-app-name', settings.appName, skipBinary))
             .pipe(replace('@sample-app-role', settings.appName + '-role', skipBinary))
+            .pipe(replace('@kestrel-port', settings.kestrelPort, skipBinary))
             // .pipe(replace('@node-port', settings.nodePort, skipBinary))
             .pipe(replace('@ml-http-port', settings.appPort, skipBinary))
             .pipe(replace('@ml-xcc-port', settings.xccPort || settings.appPort, skipBinary))
