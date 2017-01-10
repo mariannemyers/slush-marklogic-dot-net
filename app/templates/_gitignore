@@ -12,6 +12,7 @@ local.ecosystem.json
 *.sublime-project
 *.sublime-workspace
 .tmp/
+.vscode/
 
 ## MGM Pulling in a sample .gitignore for a ASP.NET Core project
 
