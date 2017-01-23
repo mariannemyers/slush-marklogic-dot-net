@@ -29,6 +29,9 @@ namespace slush_marklogic_dotnet_appserver
         {
             // Map the #SpaSettings section to the <see cref=SpaSettings /> class
             services.Configure<SpaSettings>(Configuration.GetSection("SpaSettings"));
+            services.AddMvc();
+            services.AddDistributedMemoryCache();
+            services.AddSession();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -41,18 +44,22 @@ namespace slush_marklogic_dotnet_appserver
                 app.UseDeveloperExceptionPage();
             }
 
+            // UseSession must come before UseMvc
+            app.UseSession();
+            app.UseMvc();
+
             app.UseDefaultFiles();
             app.UseStaticFiles();
+            
             ConfigureRoutes(app, spaSettings.Value);
+
 
             Console.WriteLine("MarkLogic App Server: " + Configuration["MarkLogic:Host"] + 
                 " on port " + Configuration["MarkLogic:AppPort"]);
         }
 
         private void ConfigureRoutes(IApplicationBuilder app, SpaSettings spaSettings)
-        {
-            
-            
+        {          
             app.MapWhen(IsMarkLogicPath, builder => builder.RunProxy(new ProxyOptions
             {
                 Scheme = "http",
@@ -60,9 +67,9 @@ namespace slush_marklogic_dotnet_appserver
                 Port = Configuration["MarkLogic:AppPort"]
             }));
 
-            // If the route contains '.' then assume a file to be served
-            // and try to serve using StaticFiles
-            // if the route is spa route then let it fall through to the
+            // If the route contains '.' (i.e. a js file) then assume a file to 
+            // be served and try to serve using StaticFiles
+            // if the route is spa (Angular) route then let it fall through to the
             // spa index file and have it resolved by the spa application
             
             app.MapWhen(context => {
@@ -78,10 +85,6 @@ namespace slush_marklogic_dotnet_appserver
 
                 spa.UseStaticFiles();
             });
-
-            // reserved for custom routes: internationalization etc.
-            // var routeBuilder = new RouteBuilder(app);
-            // app.UseRouter(routeBuilder.Build());
         }
 
         private static bool IsMarkLogicPath(HttpContext httpContext)
@@ -91,53 +94,3 @@ namespace slush_marklogic_dotnet_appserver
     }
 }
 
-/**
-using System;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.DependencyInjection;
-
-
-
-namespace WebApplication1
-{
-    public class Startup
-    {
-
-        // This method gets called by the runtime. Use this method to add services to the container.
-        public void ConfigureServices(IServiceCollection services)
-        {
-            // Add framework services.  Why you need DI.
-            services.AddMvc();
-        }
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
-        {
-            app.UseStaticFiles();
-
-            app.MapWhen(IsMarkLogicPath, builder => builder.RunProxy(new ProxyOptions
-            {
-                Scheme = "http",
-                Host = "localhost",
-                Port = "8140"
-            }));
-
-            // Don't forget to add the services above.   
-            app.UseMvc();
-            // app.Run(context =>
-            // {
-            //     return context.Response.WriteAsync("Hello from ASP.NET Core!");
-            // });
-
-
-        }
-
-        private static bool IsMarkLogicPath(HttpContext httpContext)
-        {
-            return httpContext.Request.Path.Value.StartsWith(@"/v1/", StringComparison.OrdinalIgnoreCase);
-        }
-    }
-}
-
-*/
