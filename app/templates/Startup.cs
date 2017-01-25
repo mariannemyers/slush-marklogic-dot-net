@@ -32,6 +32,8 @@ namespace slush_marklogic_dotnet_appserver
             services.AddMvc();
             services.AddDistributedMemoryCache();
             services.AddSession();
+            services.AddOptions();
+            services.Configure<MarkLogicOptions>(Configuration.GetSection("MarkLogic"));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

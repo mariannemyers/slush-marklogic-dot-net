@@ -1,3 +1,5 @@
+using Newtonsoft.Json.Linq;
+
 namespace slush_marklogic_dotnet_appserver
 {
     public class UserViewModel
@@ -9,5 +11,7 @@ namespace slush_marklogic_dotnet_appserver
         public string username { get; set; }
         public string password { get; set; }
         public bool authenticated { get; set; }
+        public JToken profile { get; set; }        
+
     }
 }
