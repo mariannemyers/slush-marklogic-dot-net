@@ -62,12 +62,12 @@ namespace slush_marklogic_dotnet_appserver
 
         private void ConfigureRoutes(IApplicationBuilder app, SpaSettings spaSettings)
         {          
-            app.MapWhen(IsMarkLogicPath, builder => builder.RunProxy(new ProxyOptions
-            {
-                Scheme = "http",
-                Host = Configuration["MarkLogic:Host"],
-                Port = Configuration["MarkLogic:AppPort"]
-            }));
+            // app.MapWhen(IsMarkLogicPath, builder => builder.RunProxy(new ProxyOptions
+            // {
+            //     Scheme = "http",
+            //     Host = Configuration["MarkLogic:Host"],
+            //     Port = Configuration["MarkLogic:AppPort"]
+            // }));
 
             // If the route contains '.' (i.e. a js file) then assume a file to 
             // be served and try to serve using StaticFiles
@@ -89,10 +89,10 @@ namespace slush_marklogic_dotnet_appserver
             });
         }
 
-        private static bool IsMarkLogicPath(HttpContext httpContext)
-        {
-            return httpContext.Request.Path.Value.StartsWith(@"/v1/", StringComparison.OrdinalIgnoreCase);
-        }
+        // private static bool IsMarkLogicPath(HttpContext httpContext)
+        // {
+        //     return httpContext.Request.Path.Value.StartsWith(@"/v1/", StringComparison.OrdinalIgnoreCase);
+        // }
     }
 }
 
