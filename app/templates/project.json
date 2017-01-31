@@ -24,7 +24,8 @@
         "Microsoft.AspNetCore.Mvc.Formatters.Json": "1.1.0",
         "Microsoft.AspNetCore.Routing": "1.1.0",
         "Microsoft.Extensions.Options.ConfigurationExtensions": "1.1.0",
-        "Microsoft.AspNetCore.Proxy": "0.2.0"
+        "Microsoft.AspNetCore.Proxy": "0.2.0",
+        "Microsoft.AspNetCore.Session": "1.1.0"
     },
     "tools": {
         "Microsoft.AspNetCore.Server.IISIntegration.Tools": "1.1.0-preview4-final"

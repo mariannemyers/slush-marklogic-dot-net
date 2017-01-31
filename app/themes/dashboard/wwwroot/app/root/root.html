@@ -14,8 +14,7 @@
         <span class="sr-only">Toggle navigation</span>
       </a>
       <!-- Navbar Right Menu -->
-      <!-- START_DISABLED_PROFILE: Removed "user profile support" until feature #10 is added -->
-      <!--div class="navbar-custom-menu">
+      <div class="navbar-custom-menu">
         <ul class="nav navbar-nav" ng-if="!ctrl.currentUser">
           <li class="user">
             <a ui-sref="root.login"><span class="glyphicon glyphicon-user"></span> Sign In</a></li>
@@ -27,13 +26,13 @@
               <span class="hidden-xs">{{ ctrl.currentUser.profile.fullname || ctrl.currentUser.username }}</span>
             </a>
             <ul class="dropdown-menu">
-              <!== User image ==>
+              <!-- User image -->
               <li class="user-header">
                 <p>
                   {{ ctrl.currentUser.profile.fullname || ctrl.currentUser.username }}
                 </p>
               </li>
-              <!== Menu Footer==>
+              <!-- Menu Footer -->
               <li class="user-footer">
                 <div class="pull-left">
                   <a ui-sref="root.profile" class="btn btn-default btn-flat">Profile</a>
@@ -45,8 +44,7 @@
             </ul>
           </li>
         </ul>
-      </div-->
-      <!-- END_DISABLED_PROFILE -->
+      </div>
     </nav>
   </header>
 

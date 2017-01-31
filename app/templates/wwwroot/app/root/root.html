@@ -15,13 +15,9 @@
       <ul class="nav navbar-nav">
         <li><a href="/">Home</a></li>
         <li><a href="/search">Search</a></li>
-        <!-- START_DISABLED_PROFILE: Removed "user profile support" until feature #10 is added -->
-        <!--li ng-show="ctrl.currentUser && !ctrl.currentUser.disallowUpdates"><a href="/create">Create</a></li-->
-        <!-- END_DISABLED_PROFILE -->
+        <li ng-show="ctrl.currentUser && !ctrl.currentUser.disallowUpdates"><a href="/create">Create</a></li>
       </ul>
-      <!-- START_DISABLED_PROFILE: Removed "user profile support" until feature #10 is added -->
-      <!--ml-user mode="inline"></ml-user-->
-      <!-- END_DISABLED_PROFILE -->
+      <ml-user mode="inline"></ml-user>
     </div><!-- /.navbar-collapse -->
   </nav>
 

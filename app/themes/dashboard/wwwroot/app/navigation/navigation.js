@@ -20,12 +20,6 @@
       linkAreas = {};
       for (var i = 0; i < states.length; i++) {
         s = states[i];
-        // START_DISABLED_PROFILE: Removed "user profile support" until feature #10 is added
-        // Temporarily prevent "root.create" state
-        if (s.name === 'root.create') {
-          continue;
-        }
-        // END_DISABLED_PROFILE
         lbl = s.navLabel;
         if (lbl) {
           var link = { state: s.name, label: lbl, url: s.url };
