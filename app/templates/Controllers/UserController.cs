@@ -6,6 +6,7 @@ using System.Net.Http;
 using Microsoft.Extensions.Options;
 using System.Net.Http.Headers;
 using Newtonsoft.Json.Linq;
+using System.Threading.Tasks;
 
 namespace slush_marklogic_dotnet_appserver.Controllers
 {
@@ -18,17 +19,17 @@ namespace slush_marklogic_dotnet_appserver.Controllers
         public UserController(IOptions<MarkLogicOptions> settings) {
             _settings = settings;
         }
-        
+
         [HttpPost("[action]")]
-        public UserViewModel Login([FromBody] UserViewModel user)
+        public async Task<UserViewModel> Login([FromBody] UserViewModel user)
         {
             // Here you'll pass along the credentials like the node layer does
             // and set authenticated = true.  Store this information in the Session.
-            user = GetUserProfile(user);
+            user = await GetUserProfileAsync(user);
             HttpContext.Session.SetString("user.username", user.username);
-            HttpContext.Session.SetString("user.password", user.password);
             HttpContext.Session.SetString("user.authenticated", user.authenticated.ToString().ToLowerInvariant());
-            if (user.profile != null) {
+            if (user.profile != null)
+            {
                 HttpContext.Session.SetString("user.profile", user.profile.ToString());
             }
             return user;
@@ -64,14 +65,15 @@ namespace slush_marklogic_dotnet_appserver.Controllers
             return model;
         }
 
-        private UserViewModel GetUserProfile(UserViewModel user) {
+        private async Task<UserViewModel> GetUserProfileAsync(UserViewModel user)
+        {
             var userSettingsUri = new Uri(
-                "http://" 
-                + _settings.Value.Host 
-                + ":" 
-                + _settings.Value.AppPort 
-                + "/v1/documents?uri=/api/users/" 
-                + user.username 
+                "http://"
+                + _settings.Value.Host
+                + ":"
+                + _settings.Value.AppPort
+                + "/v1/documents?uri=/api/users/"
+                + user.username
                 + ".json"
             );
             var credentials = new NetworkCredential(user.username, user.password);
@@ -80,17 +82,25 @@ namespace slush_marklogic_dotnet_appserver.Controllers
             {
                 http.DefaultRequestHeaders.Accept.Clear();
                 http.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                var response = http.GetAsync(userSettingsUri).Result;
-                if (response.StatusCode == HttpStatusCode.OK) {
+                var response = await http.GetAsync(userSettingsUri);
+                if (response.StatusCode == HttpStatusCode.OK)
+                {
                     // good.  add the json settings
                     user.authenticated = true;
-                    var profile = response.Content.ReadAsStringAsync().Result;
+                    var profile = await response.Content.ReadAsStringAsync();
                     user.profile = JObject.Parse(profile)["user"];
-                } else if (response.StatusCode == HttpStatusCode.NotFound) {
+                }
+                else if (response.StatusCode == HttpStatusCode.NotFound)
+                {
                     // password OK.  No settings.
                     user.authenticated = true;
-                } else {
+                }
+                else
+                {
                     user.authenticated = false;
+                }
+                if (user.authenticated) {
+                    HttpContext.Session.SetObjectAsJson("credentials", credentials);
                 }
             }
             return user;
