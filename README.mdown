@@ -132,3 +132,24 @@ you can specify those options with this syntax:
 
     slush marklogic-dotnet <appName> appType=mvc branch=dev
 
+## Multiple Environments
+
+ASP.NET Core provides support for controlling application behavior across multiple environments,
+such as development, staging, and production.
+
+ASP.NET Core uses the environment variable `ASPNETCORE_ENVIRONMENT` to determine which environment 
+the application should run in.  This variable can be set to any value, but threee values are used 
+by convention: `Development`, `Staging`, and `Production`.
+
+You can create different `appsettings.json` configurations for each of your environments by appending 
+the environment name to the filename, for example:
+
+    appsettings.Development.json
+
+You can specify the environment by setting the `ASPNETCORE_ENVIRONMENT` environment variable.  The method 
+depends on your operating system.  For example, on macOS, the environemtn can be specified in-line:
+
+    ASPNETCORE_ENVIRONMENT=Development dotnet run
+
+Refer to "Setting the environment" section [here](https://docs.microsoft.com/en-us/aspnet/core/fundamentals/environments)
+for more details.
