@@ -1,19 +1,23 @@
-/* global X2JS,vkbeautify */
+/* global vkbeautify */
 (function () {
-  'use strict';
-  angular.module('app.detail')
-  .controller('DetailCtrl', DetailCtrl);
 
-  DetailCtrl.$inject = ['doc', '$stateParams','MLRest', 'ngToast',
-                        '$state','$scope','userService'];
-  function DetailCtrl(doc, $stateParams, MLRest, toast, $state, $scope, userService) {
+  'use strict';
+
+  angular.module('app.detail')
+    .controller('DetailCtrl', DetailCtrl);
+
+  DetailCtrl.$inject = ['doc', '$stateParams', 'MLRest', 'ngToast',
+                        '$state', '$scope', 'x2js'];
+
+  // TODO: inject vkbeautify
+  function DetailCtrl(doc, $stateParams, MLRest, toast, $state, $scope, x2js) {
     var ctrl = this;
 
     var uri = $stateParams.uri;
 
-    var contentType = doc.headers('content-type');
+    var contentType = doc.headers('content-type').split(/;/)[0];
+    var encodedUri = encodeURIComponent(uri);
 
-    var x2js = new X2JS();
     /* jscs: disable */
     if (contentType.lastIndexOf('application/json', 0) === 0) {
       /*jshint camelcase: false */
@@ -41,8 +45,10 @@
       ctrl.json = {'Error' : 'Error occured determining document type.'};
     }
 
-    function deleteFunc() {
-      MLRest.deleteDocument (uri).then(function(response) {
+    function deleteDocument() {
+      MLRest.deleteDocument(uri).then(function(response) {
+        // TODO: not reached with code coverage yet!
+
         // create a toast with settings:
         toast.create({
           className: 'warning',
@@ -54,18 +60,19 @@
             $state.go('root.search');
           }
         });
+      }, function(response) {
+        toast.danger(response.data);
       });
     }
 
     angular.extend(ctrl, {
       doc : doc.data,
       uri : uri,
-      currentUser: null,
-      delete: deleteFunc
-    });
-
-    $scope.$watch(userService.currentUser, function(newValue) {
-      ctrl.currentUser = newValue;
+      contentType: contentType,
+      fileName: uri.split('/').pop(),
+      viewUri: '/v1/documents?uri=' + encodedUri + '&format=binary&transform=sanitize',
+      downloadUri: '/v1/documents?uri=' + encodedUri + '&format=binary&transform=download',
+      delete: deleteDocument
     });
   }
 }());

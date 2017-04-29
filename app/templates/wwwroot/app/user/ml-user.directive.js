@@ -4,26 +4,26 @@
 
   angular.module('app.user')
     .directive('mlUser', UserDirective)
-    .controller('UserController', UserController);
+    .controller('UserCtrl', UserCtrl);
 
   function UserDirective() {
     return {
       restrict: 'EA',
-      controller: 'UserController',
-      controllerAs: 'ctrl',
+      controller: 'UserCtrl',
+      controllerAs: '$ctrl',
       replace: true,
       scope: {
         showCancel: '=',
         mode: '@',
         callback: '&'
       },
-      templateUrl: 'app/user/user-dir.html'
+      templateUrl: 'app/user/ml-user.html'
     };
   }
 
-  UserController.$inject = ['$scope', 'userService', 'loginService'];
+  UserCtrl.$inject = ['$scope', 'userService', 'loginService'];
 
-  function UserController($scope, userService, loginService) {
+  function UserCtrl($scope, userService, loginService) {
     var ctrl = this;
     angular.extend(ctrl, {
       username: null,
