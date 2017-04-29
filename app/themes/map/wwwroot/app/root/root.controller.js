@@ -2,7 +2,6 @@
   'use strict';
 
   angular.module('app.root')
-    .factory('rootUtils', RootUtilsFactory)
     .controller('RootCtrl', RootCtrl)
     .filter('isObject', function() {
       return function(val) {
@@ -15,36 +14,27 @@
       };
     });
 
-  function RootUtilsFactory() {
-    var service = {}, width = window.innerWidth;
-
-    service.isMobile = function() {
-      return service.isXS() || service.isSM();
-    };
-
-    service.isXS = function() {
-      return width < 768; // match boostrap xs
-    };
-
-    service.isSM = function() {
-      return width < 992; // match bootrap sm
-    };
-
-    return service;
-  }
-
-  RootCtrl.$inject = ['messageBoardService', 'userService', '$scope', '$rootScope',
-    '$templateRequest', '$compile', 'rootUtils', 'MLUiGmapManager', 'uiGmapGoogleMapApi'];
+  RootCtrl.$inject = ['messageBoardService', 'userService', '$scope',
+    '$state', 'appConfig', '$rootScope', '$templateRequest', '$compile',
+    'mapUtils', 'MLUiGmapManager', 'uiGmapGoogleMapApi'];
 
   function RootCtrl(messageBoardService, userService, $scope,
-    $rootScope, $templateRequest, $compile, rootUtils, mlMapManager, $googleMapsApi) {
+    $state, appConfig, $rootScope, $templateRequest, $compile,
+    mapUtils, mlMapManager, $googleMapsApi) {
 
-    var ctrl = this;
-    ctrl.currentYear = new Date().getUTCFullYear();
-    ctrl.messageBoardService = messageBoardService;
+    var rootCtrl = this;
+    rootCtrl.currentYear = new Date().getUTCFullYear();
+    rootCtrl.messageBoardService = messageBoardService;
+    angular.extend(rootCtrl, appConfig);
 
     $scope.$watch(userService.currentUser, function(newValue) {
-      ctrl.currentUser = newValue;
+      rootCtrl.currentUser = newValue;
+    });
+
+    $scope.$watch(function() {
+      return $state.current.name;
+    }, function(newValue) {
+      rootCtrl.currentState = newValue;
     });
 
     var miw = window.jQuery('#map-mobile-info-window').get(0); // FIXME: use angular.element?
@@ -56,13 +46,17 @@
       $googleMaps = $gMaps;
     });
 
-    ctrl.mapManager = mlMapManager;
+    rootCtrl.mapManager = mlMapManager;
+    mlMapManager.init(
+      /* center */ { latitude: 52.0325133, longitude: 5.2289087 },
+      /* zoom */ 2
+    );
 
-    if (rootUtils.isMobile()) {
-      ctrl.hideControls = true;
+    if (miw && mapUtils.isMobile()) {
+      rootCtrl.hideControls = true;
       // compile the info window template
       // FIXME: can we use ng-include somehow? or the compile directive?
-      $templateRequest('app/map/infoWindow.html').then(function(html) {
+      $templateRequest('app/root/infoWindow.html').then(function(html) {
         var fn = $compile(html);
         var ele = fn(miwscope);
         miw.appendChild(ele[0]); // compile the template once, and we'll just update the scope
@@ -70,15 +64,16 @@
     }
 
     // FIXME: can we make more use of ui-gmap-window nested inside ui-gmap-markers directive?
-    //        Alternatively, push away part of this code into a service. RootUtils perhaps?
-    ctrl.markerClick = function(inst,evt,marker) {
+    //        Alternatively, push away part of this code into a service or directive.
+    //        RootUtils or app.map module perhaps?
+    rootCtrl.markerClick = function(inst,evt,marker) {
       if (!$googleMaps) {
         return;
       }
 
       if (!pixelOffset) {
         pixelOffset = new $googleMaps.Size(0, -30);
-        ctrl.infoWindow.options = { pixelOffset: pixelOffset };
+        rootCtrl.infoWindow.options = { pixelOffset: pixelOffset };
       }
 
       var lat = inst.getPosition().lat() + 20;
@@ -87,9 +82,9 @@
 
       if (!marker.content) {
         inst.map.setCenter(position);
-        ctrl.infoWindow.shown = false;
-        delete ctrl.infoWindow.data;
-      } else if (rootUtils.isMobile()) {
+        rootCtrl.infoWindow.shown = false;
+        delete rootCtrl.infoWindow.data;
+      } else if (mapUtils.isMobile()) {
         if (!mobileWin) {
           mobileWin = new $googleMaps.InfoWindow({ content: '<span>' + marker.title + '</span>' });
           google.maps.event.addListener(mobileWin, 'closeclick', function() {
@@ -122,28 +117,28 @@
         // otherwise manipulate the google map infowindow
         shown = (shownMarker === marker.title);
         if (shown) {
-          ctrl.infoWindow.shown = false;
+          rootCtrl.infoWindow.shown = false;
           shownMarker = null;
         } else {
-          ctrl.infoWindow.coords = {
+          rootCtrl.infoWindow.coords = {
             latitude: marker.location.latitude,
             longitude: marker.location.longitude
           };
-          ctrl.infoWindow.shown = true;
-          ctrl.infoWindow.data = marker.content;
+          rootCtrl.infoWindow.shown = true;
+          rootCtrl.infoWindow.data = marker.content;
           inst.map.setCenter(position);
           shownMarker = marker.title;
         }
       }
     };
 
-    ctrl.closeClick = function() {
-      ctrl.infoWindow.shown = false;
+    rootCtrl.closeClick = function() {
+      rootCtrl.infoWindow.shown = false;
     };
 
-    ctrl.infoWindow = {
+    rootCtrl.infoWindow = {
       shown: false,
-      templateUrl: 'app/map/infoWindow.html'
+      templateUrl: 'app/root/infoWindow.html'
     };
 
   }
