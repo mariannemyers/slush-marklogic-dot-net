@@ -18,7 +18,8 @@ namespace slush_marklogic_dotnet_appserver
             // Set up configuration sources.
             var builder = new ConfigurationBuilder()
                 .SetBasePath(env.ContentRootPath)
-                .AddJsonFile("appsettings.json")
+                .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
+                .AddJsonFile("appsettings.json", optional: true)
                 .AddEnvironmentVariables();
             Configuration = builder.Build();
         }
@@ -55,9 +56,9 @@ namespace slush_marklogic_dotnet_appserver
             
             ConfigureRoutes(app, spaSettings.Value);
 
-
-            Console.WriteLine("MarkLogic App Server: " + Configuration["MarkLogic:Host"] + 
-                " on port " + Configuration["MarkLogic:AppPort"]);
+            var mlHost = Configuration["MarkLogic:Host"];
+            var mlPort = Configuration["MarkLogic:AppPort"];
+            Console.WriteLine($"MarkLogic App Server: {mlHost} on port {mlPort}");
         }
 
         private void ConfigureRoutes(IApplicationBuilder app, SpaSettings spaSettings)
