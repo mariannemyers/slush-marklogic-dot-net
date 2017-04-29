@@ -20,7 +20,6 @@ var colors = require('colors'),
   _ = require('underscore.string');
 /* jshint ignore:end */
 
-var npmVersion = null;
 
 var settings = {};
 
@@ -633,6 +632,9 @@ gulp.task('init', [], function(done) {
               // change _foo to .foo
               if (file.basename[0] === '_') {
                 file.basename = '.' + file.basename.slice(1);
+              }
+              else if(file.basename === '@sample-app-name') {
+                file.basename = settings.appName;
               }
 
             }))
