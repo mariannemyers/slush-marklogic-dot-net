@@ -1,5 +1,5 @@
 {
-  "name": "dashboard",
+  "name": "@sample-app-name",
   "version": "0.0.0",
   "dependencies": {
     "jquery": "~2.1.4",
@@ -19,20 +19,21 @@
     "bootstrap": "~3.3.5",
     "font-awesome": "~4.6.0",
     "highcharts": "^4.2",
-    "highlightjs":"~8.7.0",
+    "highlightjs": "~8.7.0",
     "ng-json-explorer": "8c2a0f9104",
     "ngtoast": "^2.0.0",
     "lodash": "~3.10.1",
     "ml-search-ng": "~0.2.0",
     "ml-utils": "withjam/ml-utils",
     "tinymce-dist": "4.3.12",
-    "vkbeautify": "*"
+    "vkbeautify": "*",
+    "sinon": "1.15.4"
   },
   "overrides": {
     "angular-highlightjs": {
       "dependencies": {
         "angular" : ">1.0.8",
-        "highlightjs":"~8.7.0"
+        "highlightjs": "~8.7.0"
       }
     },
     "vkbeautify": {
@@ -48,6 +49,7 @@
   },
   "private": true,
   "resolutions": {
-    "angular": "~1.4.4"
+    "angular": "~1.4.4",
+    "sinon": "*"
   }
 }
