@@ -11,7 +11,11 @@ using Microsoft.Extensions.Options;
 
 namespace slush_marklogic_dotnet_appserver.Controllers
 {
-    [Route("v1/{*url}")]
+   // [Route("v1/{*url}")]
+    [Route("v1/search/{*url}"), Route("v1/resources/{*url}"), Route("v1/documents/{*url}"),
+     Route("v1/config/query/{*url}"), Route("v1/graphs/sparql/{*url}"), 
+     Route("v1/suggest/{*url}"), Route("v1/values/{*url}")]
+    // Route("detail/{*url}")]
     public class SearchController : Controller
     {
 
