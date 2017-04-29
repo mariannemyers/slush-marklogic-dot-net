@@ -13,7 +13,7 @@ var gulp = require('gulp'),
   pkgSettings = require('./package.json'),
   spawn = require('child_process').spawn,
   // uuid = require('node-uuid'),
-  win32 = process.platform === 'win32';
+  win32 = process.platform === 'win32',
   xmlpoke = require('gulp-xmlpoke');
 
 /* jshint ignore:start */
