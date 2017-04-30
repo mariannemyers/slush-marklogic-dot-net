@@ -2,6 +2,14 @@
 
 'use strict';
 
+try {
+  var args = require('yargs');
+} catch (e) {
+  console.log('WARN: Required NPM dependencies are not installed!');
+  console.log('Please run: npm install');
+  process.exit(1);
+}
+
 var args = require('yargs').argv;
 var config = require('./gulp.config')();
 var del = require('del');
@@ -97,7 +105,10 @@ gulp.task('fonts', ['clean-fonts'], function() {
 
   return gulp
     .src(config.fonts)
-    .pipe(gulp.dest(config.client + 'fonts'));
+    .pipe(gulp.dest(config.client + 'fonts'))
+    .pipe($.if(args.verbose, $.print()))
+    .pipe(gulp.dest(config.build + 'fonts'))
+    .pipe($.if(args.verbose, $.print()));
 });
 
 /**
@@ -168,7 +179,7 @@ gulp.task('templatecache', ['clean-code'], function() {
       config.templateCache.file,
       config.templateCache.options
     ))
-    .pipe(gulp.dest(config.client))
+    .pipe(gulp.dest(config.temp))
     .pipe($.if(args.verbose, $.print()));
 });
 
@@ -461,6 +472,7 @@ gulp.task('clean', ['clean-fonts'], function() {
  */
 gulp.task('clean-fonts', function() {
   var files = [].concat(
+    config.build + 'fonts/**/*.*',
     config.client + 'fonts/**/*.*'
   );
   return clean(files);
@@ -536,6 +548,12 @@ function init(env, done) {
   } else {
     //copy from slushfile - config gulp - with modifications to use config instead
     var inquirer = require('inquirer');
+    var ignoreProps = false;
+
+    if (!fs.existsSync('deploy/' + env + '.properties')) {
+      fs.writeFileSync('deploy/' + env + '.properties', env + '-server=localhost', 'utf8');
+      ignoreProps = true;
+    }
 
     run('./ml', [env, 'info', '--format=json']).then(function(output) {
       var localJson = fs.existsSync('local.json') ? JSON.parse(fs.readFileSync('local.json', 'utf8')) : {};
@@ -639,6 +657,8 @@ function init(env, done) {
           settings.nameDashed = _s.slugify(appName);
         }
 
+        settings.marklogicAdminPass = settings.marklogicAdminPass || '';
+
         try {
           var configJSON = {};
           configJSON['app-name'] = settings.nameDashed;
@@ -663,7 +683,7 @@ function init(env, done) {
           fs.writeFileSync(env + '.json', configString, encoding);
           log('Created ' + env + '.json.');
 
-          if (fs.existsSync('deploy/' + env + '.properties')) {
+          if (!ignoreProps && fs.existsSync('deploy/' + env + '.properties')) {
             log('NOTE: deploy/' + env + '.properties already exists, change manually please!');
           } else {
             var envProperties = '#################################################################\n' +

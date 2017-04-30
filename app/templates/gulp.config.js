@@ -10,6 +10,7 @@ module.exports = function() {
   var root = './';
   var specRunnerFile = 'specs.html';
   var cssDir = client + 'css/';
+  var temp = './.tmp/';
   var _ = require('lodash');
   var wiredep = require('wiredep');
   var bower = {
@@ -81,6 +82,8 @@ module.exports = function() {
       bower.directory + 'angular-mocks/angular-mocks.js',
       client + 'stubs/**/*.js'
     ],
+    temp: temp,
+
     /**
      * optimized files
      */
