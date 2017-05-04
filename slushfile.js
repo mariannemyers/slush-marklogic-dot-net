@@ -13,7 +13,8 @@ var gulp = require('gulp'),
   pkgSettings = require('./package.json'),
   spawn = require('child_process').spawn,
   // uuid = require('node-uuid'),
-  win32 = process.platform === 'win32';
+  win32 = process.platform === 'win32',
+  xmlpoke = require('gulp-xmlpoke');
 
 /* jshint ignore:start */
 var colors = require('colors'),
@@ -193,7 +194,7 @@ function getRoxyScript(appName, mlVersion, fork, branch) {
   return d.promise;
 }
 
-// Run the Roxy "ml new" command for the new project
+// Run the Roxy 'ml new' command for the new project
 function runRoxy(config) {
   var scriptName = config.script,
     appName = config.app,
@@ -308,17 +309,6 @@ function configRoxy() {
   try {
     var foo = fs.readFileSync('deploy/ml-config.xml', encoding);
 
-    // add an index for the default content
-    foo = foo.replace(/^\s*<range-element-indexes>/m,
-      '      <range-element-indexes>\n' +
-      '        <range-element-index>\n' +
-      '          <scalar-type>string</scalar-type>\n' +
-      '          <namespace-uri/>\n' +
-      '          <localname>eyeColor</localname>\n' +
-      '          <collation>http://marklogic.com/collation/codepoint</collation>\n' +
-      '          <range-value-positions>false</range-value-positions>\n' +
-      '        </range-element-index>\n');
-
     // add a geospatial index for the default content
     foo = foo.replace(/^\s*<geospatial-element-pair-indexes>/m,
       '      <geospatial-element-pair-indexes>\n' +
@@ -342,6 +332,26 @@ function configRoxy() {
         '          <path-expression>docFormat</path-expression>\n' +
         '          <range-value-positions>false</range-value-positions>\n' +
         '          <invalid-values>reject</invalid-values>\n' +
+        '        </range-path-index>\n' +
+        '        <range-path-index>\n' +
+        '          <scalar-type>string</scalar-type>\n' +
+        '          <collation>http://marklogic.com/collation/codepoint</collation>\n' +
+        '          <path-expression>eyeColor</path-expression>\n' +
+        '          <range-value-positions>false</range-value-positions>\n' +
+        '          <invalid-values>reject</invalid-values>\n' +
+        '        </range-path-index>\n' +
+        '        <range-path-index>\n' +
+        '          <scalar-type>string</scalar-type>\n' +
+        '          <collation>http://marklogic.com/collation/codepoint</collation>\n' +
+        '          <path-expression>gender</path-expression>\n' +
+        '          <range-value-positions>false</range-value-positions>\n' +
+        '          <invalid-values>reject</invalid-values>\n' +
+        '        </range-path-index>\n' +
+        '        <range-path-index>\n' +
+        '          <scalar-type>unsignedInt</scalar-type>\n' +
+        '          <path-expression>age</path-expression>\n' +
+        '          <range-value-positions>false</range-value-positions>\n' +
+        '          <invalid-values>reject</invalid-values>\n' +
         '        </range-path-index>\n');
 
     // fix default app-role privileges to match rest-style applications
@@ -357,6 +367,27 @@ function configRoxy() {
       '      </privileges>\n');
 
     fs.writeFileSync('deploy/ml-config.xml', foo);
+
+    console.log('Applying replacements..');
+    gulp.src(['deploy/ml-config.xml'])
+    .pipe(xmlpoke({
+        replacements: [{
+          namespaces: {
+            db: 'http://marklogic.com/xdmp/database'
+          },
+          xpath: ['//db:database[1]/db:stemmed-searches','//db:database[1]/db:word-searches','//db:database[1]/db:trailing-wildcard-searches'],
+          valueType: 'remove'
+        },{
+          namespaces: {
+            db: 'http://marklogic.com/xdmp/database'
+          },
+          xpath: '//db:database[1]',
+          valueType: 'append',
+          value: '  <stemmed-searches>basic</stemmed-searches>\n      <word-searches>true</word-searches>\n      <trailing-wildcard-searches>true</trailing-wildcard-searches>\n    '
+        }]
+      }))
+      .pipe(gulp.dest('deploy'));
+
   } catch (e) {
     console.log('failed to update configuration: ' + e.message);
     process.exit(1);
@@ -522,6 +553,9 @@ gulp.task('init', [], function(done) {
         name: '3-columns',
         value: '3column'
       }, {
+        name: 'Cards',
+        value: 'cards'
+      }, {
         name: 'Dashboard',
         value: 'dashboard'
       }, {
@@ -548,6 +582,9 @@ gulp.task('init', [], function(done) {
       }, {
         name: 'Map/Graph',
         value: 'map'
+      }, {
+        name: 'Data records',
+        value: 'cards'
       }, {
         name: 'Documents',
         value: '3column'
@@ -604,7 +641,7 @@ gulp.task('init', [], function(done) {
     settings.mlVersion = answers.mlVersion || clArgs['ml-version'];
     settings.marklogicHost = answers.marklogicHost || clArgs['ml-host'];
     settings.marklogicAdminUser = answers.marklogicAdminUser || clArgs['ml-admin-user'];
-    settings.marklogicAdminPass = answers.marklogicAdminPass || clArgs['ml-admin-pass'];
+    settings.marklogicAdminPass = answers.marklogicAdminPass || clArgs['ml-admin-pass'] || '';
     settings.kestrelPort = answers.kestrelPort || clArgs['kestrel-port'];
     // settings.nodePort = answers.nodePort || clArgs['node-port'];
     settings.appPort = answers.appPort || clArgs['ml-http-port'];

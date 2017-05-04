@@ -38,15 +38,15 @@
 
     function getAuthenticatedStatus() {
       if (_isAuthenticated !== undefined) {
-        return _isAuthenticated;
+        return $q.resolve(_isAuthenticated);
       }
 
       return $http.get('/api/user/status', {}).then(function(response) {
-        if (response.data.appUsersOnly) {
-          _userPrefix = response.data.appName + '-';
-        }
         if (response.data.authenticated === false) {
           _isAuthenticated = false;
+          if (response.data.appUsersOnly) {
+            _userPrefix = response.data.appName + '-';
+          }
         }
         else
         {
@@ -59,6 +59,9 @@
     function loginSuccess(response) {
       _loginError = null;
       _isAuthenticated = true;
+      if (response.data.appUsersOnly) {
+        _userPrefix = response.data.appName + '-';
+      }
       $rootScope.$broadcast('loginService:login-success', response.data);
     }
 
@@ -66,6 +69,15 @@
       return $http.post('/api/user/login', {
         'username': _userPrefix + username,
         'password': password
+      }).then(function(response) {
+        loginSuccess(response);
+        return response;
+      }, failLogin);
+    }
+
+    function switchLogin(username) {
+      return $http.post('/api/user/switch', {
+        'username': username
       }).then(function(response) {
         loginSuccess(response);
         return response;
@@ -108,6 +120,8 @@
             'params': JSON.stringify((_toStateParams || $stateParams))
           }).then(function() {
             d.reject();
+          }, function(error) {
+            throw error;
           });
       }
       return d.promise;
@@ -161,21 +175,12 @@
       }
 
       if (routeIsProtected(next.name)) {
-        var auth = service.getAuthenticatedStatus();
-
-        if (angular.isFunction(auth.then)) {
-          auth.then(function() {
-            if (!service.isAuthenticated()) {
-              //this does NOT block requests in a timely fashion...
-              blockRoute(event, next, nextParams);
-            }
-          });
-        }
-        else {
-          if (!auth) {
+        service.getAuthenticatedStatus().then(function() {
+          if (!service.isAuthenticated()) {
+            //this does NOT block requests in a timely fashion...
             blockRoute(event, next, nextParams);
           }
-        }
+        });
 
       }
     });
@@ -188,6 +193,7 @@
     angular.extend(service, {
       login: login,
       logout: logout,
+      switch: switchLogin,
       loginPrompt: loginPrompt,
       loginError: loginError,
       loginMode: loginMode,
