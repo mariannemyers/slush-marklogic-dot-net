@@ -41,7 +41,7 @@ function printUsage() {
   process.stdout.write('  fork=<..>             Github fork to use for Roxy. Defaults to: marklogic\n');
   process.stdout.write('  branch=<..>           Github branch to use for Roxy. Defaults to: master\n');
   process.stdout.write('  theme=<..>            Slush theme to use. Defaults to: default\n');
-  process.stdout.write('  ml-version=<..>       MarkLogic version. Defaults to: 8\n');
+  process.stdout.write('  ml-version=<..>       MarkLogic version. Defaults to: 9\n');
   process.stdout.write('  ml-host=<..>          Host on which MarkLogic runs. Defaults to: localhost\n');
   process.stdout.write('  ml-admin-user=<..>    User for MarkLogic deployments. Defaults to: admin\n');
   process.stdout.write('  ml-admin-pass=<..>    Pass for MarkLogic deployments. Defaults to: <blank>\n');
@@ -280,7 +280,7 @@ function configRoxy() {
     if (settings.xccPort || (settings.mlVersion < 8)) {
       localProperties += 'xcc-port=' + settings.xccPort + '\n';
     } else {
-      localProperties += '# Taking advantage of not needing a XCC Port for ML8\n' +
+      localProperties += '# Taking advantage of not needing a XCC Port for ML8+q\n' +
         'xcc-port=${app-port}\n' +
         'install-xcc=false\n';
     }
@@ -477,7 +477,7 @@ gulp.task('init', [], function(done) {
       type: 'list',
       name: 'mlVersion',
       message: 'MarkLogic version?',
-      choices: ['8', '7', '6', '5'],
+      choices: ['9', '8', '7', '6', '5'],
       default: 0
     });
   }
