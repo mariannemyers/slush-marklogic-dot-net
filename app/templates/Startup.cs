@@ -11,18 +11,12 @@ namespace slush_marklogic_dotnet_appserver
 {
     public class Startup
     {
-        public IConfigurationRoot Configuration { get; set; }
-
-        public Startup(IHostingEnvironment env)
+        public Startup(IConfiguration configuration)
         {
-            // Set up configuration sources.
-            var builder = new ConfigurationBuilder()
-                .SetBasePath(env.ContentRootPath)
-                .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
-                .AddJsonFile("appsettings.json", optional: true)
-                .AddEnvironmentVariables();
-            Configuration = builder.Build();
+            Configuration = configuration;
         }
+
+        public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         // For more information on how to configure your application, visit http://go.microsoft.com/fwlink/?LinkID=398940
@@ -53,7 +47,7 @@ namespace slush_marklogic_dotnet_appserver
 
             app.UseDefaultFiles();
             app.UseStaticFiles();
-            
+
             ConfigureRoutes(app, spaSettings.Value);
 
             var mlHost = Configuration["MarkLogic:Host"];
@@ -62,19 +56,12 @@ namespace slush_marklogic_dotnet_appserver
         }
 
         private void ConfigureRoutes(IApplicationBuilder app, SpaSettings spaSettings)
-        {          
-            // app.MapWhen(IsMarkLogicPath, builder => builder.RunProxy(new ProxyOptions
-            // {
-            //     Scheme = "http",
-            //     Host = Configuration["MarkLogic:Host"],
-            //     Port = Configuration["MarkLogic:AppPort"]
-            // }));
-
-            // If the route contains '.' (i.e. a js file) then assume a file to 
+        {
+            // If the route contains '.' (i.e. a js file) then assume a file to
             // be served and try to serve using StaticFiles
             // if the route is spa (Angular) route then let it fall through to the
             // spa index file and have it resolved by the spa application
-            
+
             app.MapWhen(context => {
                 var path = context.Request.Path.Value;
                 return !path.Contains(".");
@@ -90,10 +77,7 @@ namespace slush_marklogic_dotnet_appserver
             });
         }
 
-        // private static bool IsMarkLogicPath(HttpContext httpContext)
-        // {
-        //     return httpContext.Request.Path.Value.StartsWith(@"/v1/", StringComparison.OrdinalIgnoreCase);
-        // }
+
     }
 }
 
