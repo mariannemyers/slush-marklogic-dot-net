@@ -1,7 +1,13 @@
+using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
+
 
 namespace slush_marklogic_dotnet_appserver
 {
@@ -10,19 +16,17 @@ public class Program
     {
         public static void Main(string[] args)
         {
-            var config = new ConfigurationBuilder()
-                        .SetBasePath(Directory.GetCurrentDirectory())
-                        .AddJsonFile("hosting.json", optional: true)
-                        .Build();
-
-            var host = new WebHostBuilder()
-                        .UseConfiguration(config)
-                        .UseKestrel()
-                        .UseContentRoot(Directory.GetCurrentDirectory())
-                        .UseStartup<Startup>()
-                        .Build();
-
-            host.Run();
+            BuildWebHost(args).Run();
         }
-    }
+
+        public static IWebHost BuildWebHost(string[] args) =>
+            WebHost.CreateDefaultBuilder(args)
+                .UseStartup<Startup>()
+                .ConfigureAppConfiguration((hostContext, config) =>
+                {
+                    config.AddJsonFile("hosting.json", optional: true);
+                })
+                .Build();
+
+            }
 }

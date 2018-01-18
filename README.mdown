@@ -1,5 +1,8 @@
 # Generator of ASP.NET Core Application Backed by MarkLogic
 
+For 1.1.x support - Use the `lts` branch of this project.  The `master` branch will be in sync
+with the latest .NET Core release, currently 2.1.4.
+
 This is a [Slush](http://slushjs.github.io/) generator that produces a skeleton
 [MarkLogic](http://www.marklogic.com/) application with the following
 components:
@@ -137,16 +140,16 @@ you can specify those options with this syntax:
 ASP.NET Core provides support for controlling application behavior across multiple environments,
 such as development, staging, and production.
 
-ASP.NET Core uses the environment variable `ASPNETCORE_ENVIRONMENT` to determine which environment 
-the application should run in.  This variable can be set to any value, but threee values are used 
+ASP.NET Core uses the environment variable `ASPNETCORE_ENVIRONMENT` to determine which environment
+the application should run in.  This variable can be set to any value, but threee values are used
 by convention: `Development`, `Staging`, and `Production`.
 
-You can create different `appsettings.json` configurations for each of your environments by appending 
+You can create different `appsettings.json` configurations for each of your environments by appending
 the environment name to the filename, for example:
 
     appsettings.Development.json
 
-You can specify the environment by setting the `ASPNETCORE_ENVIRONMENT` environment variable.  The method 
+You can specify the environment by setting the `ASPNETCORE_ENVIRONMENT` environment variable.  The method
 depends on your operating system.  For example, on macOS, the environemtn can be specified in-line:
 
     ASPNETCORE_ENVIRONMENT=Development dotnet run
