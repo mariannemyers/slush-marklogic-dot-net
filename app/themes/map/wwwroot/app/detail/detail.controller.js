@@ -5,10 +5,10 @@
     .controller('DetailCtrl', DetailCtrl);
 
   DetailCtrl.$inject = ['doc', '$stateParams', 'MLRest', 'ngToast',
-                        '$state', '$scope', 'x2js', 'MLUiGmapManager'];
+                        '$state', '$scope', 'x2js', 'MLUiGmapManager', '$http'];
 
   // TODO: inject vkbeautify
-  function DetailCtrl(doc, $stateParams, MLRest, toast, $state, $scope, x2js, mlMapManager) {
+  function DetailCtrl(doc, $stateParams, MLRest, toast, $state, $scope, x2js, mlMapManager, $http) {
     var ctrl = this;
 
     var uri = $stateParams.uri;
@@ -44,7 +44,15 @@
     }
 
     function deleteDocument() {
-      MLRest.deleteDocument(uri).then(function(response) {
+      var req = {
+        method: 'DELETE',
+        url: '/v1/documents?uri=' + uri,
+        headers: {
+          'Content-Type': 'application/json; charset=utf-8'
+        },
+        data: {}
+      };
+      $http(req).deleteDocument(uri).then(function(response) {
         // TODO: not reached with code coverage yet!
 
         // create a toast with settings:
